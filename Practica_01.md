@@ -13,6 +13,6 @@ Algunas buenas prácticas que pueden ayudar a la eficiencia y velocidad de nuest
 
 Cada diseñador tiene que encontrar un enfoque que le funcione, uno que aborde los tipos de errores que es propenso a cometer y cómo superarlos.
 
-By Jorge Acevedo de León, Adrián Epifanio Rodríguez Hernández, Sergio Tabares Hernández
+By Jorge Acevedo de León, Adrián Epifanio Rodríguez Hernández y Sergio Tabares Hernández
 
 ~ Si hay 100 caracoles alrededor de un charco, ¿se considera una urbanización con piscina?. ~
