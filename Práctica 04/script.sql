@@ -13,6 +13,8 @@
 -- Model: New Model    Version: 1.0
 -- MySQL Workbench Forward Engineering
 
+
+
 DROP TABLE IF EXISTS ClienteCompraEmpleadoProducto ;
 DROP TABLE IF EXISTS Producto ;
 DROP TABLE IF EXISTS Empleado ;
@@ -20,6 +22,8 @@ DROP TABLE IF EXISTS EmpleadoTrabajaZona ;
 DROP TABLE IF EXISTS Cliente ;
 DROP TABLE IF EXISTS Zona ;
 DROP TABLE IF EXISTS Vivero ;
+
+
 
 /*===============================================================================
 =                                   Vivero                                      =
@@ -34,6 +38,7 @@ CREATE TABLE IF NOT EXISTS Vivero (
   Longitud DECIMAL NULL,
   Localidad VARCHAR(45) NULL,
   PRIMARY KEY (Nombre));
+
 -- --------------------------------------
 -- Data for table Vivero
 -- --------------------------------------
@@ -60,6 +65,7 @@ CREATE TABLE IF NOT EXISTS Zona (
     REFERENCES Vivero (Nombre)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+
 -- --------------------------------------
 -- Data for table Zona
 -- --------------------------------------
@@ -84,6 +90,7 @@ CREATE TABLE IF NOT EXISTS Cliente (
   Bonificacion DECIMAL NULL,
   Total_mensual DECIMAL NULL,
   PRIMARY KEY (DNI));
+
 -- --------------------------------------
 -- Data for table Cliente
 -- --------------------------------------
@@ -110,6 +117,7 @@ CREATE TABLE IF NOT EXISTS EmpleadoTrabajaZona (
     REFERENCES Zona (Codigo)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+
 -- --------------------------------------
 -- Data for table EmpleadoTrabajaZona
 -- --------------------------------------
@@ -139,6 +147,7 @@ CREATE TABLE IF NOT EXISTS Empleado (
     REFERENCES EmpleadoTrabajaZona (Fecha_Inicio , Zona_Codigo)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+
 -- --------------------------------------
 -- Data for table Empleado
 -- --------------------------------------
@@ -166,6 +175,7 @@ CREATE TABLE IF NOT EXISTS Producto (
     REFERENCES Zona (Codigo)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+
 -- --------------------------------------
 -- Data for table Producto
 -- --------------------------------------
@@ -206,10 +216,13 @@ CREATE TABLE IF NOT EXISTS ClienteCompraEmpleadoProducto (
     REFERENCES Cliente (DNI)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+
 -- --------------------------------------
 -- Data for table ClienteCompraEmpleadoProducto
 -- --------------------------------------
 INSERT INTO ClienteCompraEmpleadoProducto (Cantidad, Fecha, Empleado_DNI, Producto_Codigo_Producto, Producto_Zona_Codigo, Cliente_DNI) VALUES (2, '04/04/2020', '12345678A', 0001, 0101, '23456789A');
+
+
 
 SELECT * FROM Vivero;
 SELECT * FROM Zona;
