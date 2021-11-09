@@ -189,6 +189,8 @@ CREATE OR REPLACE FUNCTION comprobar_zona() RETURNS TRIGGER AS $comprobar_zona$
     IF EXISTS(SELECT * FROM Empleado WHERE (Empleado.EmpleadoTrabajaZona_Zona_Codigo = new.EmpleadoTrabajaZona_Zona_Codigo)) THEN
       new.EmpleadoTrabajaZona_Zona_Codigo := NULL;
       -- Cambiar asignación por mostrar mensaje de error
+      
+      --  SIGNAL SQLATATE = '45000' SET MESSAGE_TEXT = 'Una persona no puede vivir en dos alojamientos'
     END IF;
     RETURN NEW;
   END;
