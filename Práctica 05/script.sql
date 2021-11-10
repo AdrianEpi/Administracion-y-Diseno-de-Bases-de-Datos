@@ -113,7 +113,10 @@ CREATE OR REPLACE FUNCTION crear_email() RETURNS TRIGGER AS $crear_email$
         LOWER(TG_ARGV[0])
       );
     END IF;
-    -- Crear else en que que si ya tiene correo comprobar que exista
+    
+    ELSEIF (new.Email not like '%@ull.edu.es')) THEN
+        RAISE EXCEPTION 'El correo no es valido'
+
     RETURN NEW;
   END;
 $crear_email$ LANGUAGE plpgsql;
@@ -187,10 +190,8 @@ DROP FUNCTION IF EXISTS comprobar_zona;
 CREATE OR REPLACE FUNCTION comprobar_zona() RETURNS TRIGGER AS $comprobar_zona$
   BEGIN
     IF EXISTS(SELECT * FROM Empleado WHERE (Empleado.EmpleadoTrabajaZona_Zona_Codigo = new.EmpleadoTrabajaZona_Zona_Codigo)) THEN
-      new.EmpleadoTrabajaZona_Zona_Codigo := NULL;
-      -- Cambiar asignación por mostrar mensaje de error
-      
-      --  SIGNAL SQLATATE = '45000' SET MESSAGE_TEXT = 'Una persona no puede vivir en dos alojamientos'
+    
+        RAISE EXEPTION 'No pueden vivir en la misma vivienda';
     END IF;
     RETURN NEW;
   END;
