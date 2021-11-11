@@ -29,3 +29,38 @@ Debes entregar enlace a repositorio de GitHub que incluya al menos:
 * - Script SQL generado para construir la base de datos (fichero con extensión .sql) que incluya los disparadores. Este script debe poder ejecutarse mediante "\i NOMBRE_SCRIPT.sql" (donde 'NOMBRE_SCRIPT.sql.' sea el script creado).  
 
 * - Imagen con la salida de un SELECT de cada tabla de la base de datos
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+```bash
+-- --------------------------------------
+-- Function crear_email
+-- --------------------------------------
+DROP FUNCTION IF EXISTS crear_email;
+CREATE OR REPLACE FUNCTION crear_email() RETURNS TRIGGER AS $crear_email$
+  DECLARE newEmail VARCHAR(100);
+  BEGIN
+    IF new.Email IS NULL THEN
+      new.Email := CONCAT(
+        LOWER(new.Nombre),
+        LOWER(new.Apellido1),
+        LOWER(new.Apellido2),
+        '@',
+        LOWER(TG_ARGV[0])
+      );
+    END IF;
+    
+    ELSEIF (new.Email not like '%@ull.edu.es')) THEN
+        RAISE EXCEPTION 'El correo no es valido'
+
+    RETURN NEW;
+  END;
+$crear_email$ LANGUAGE plpgsql;
+-- --------------------------------------
+-- Trigger trigger_crear_email_before_insert
+-- --------------------------------------
+CREATE TRIGGER trigger_crear_email_before_insert
+  BEFORE INSERT ON Cliente
+  FOR EACH ROW EXECUTE PROCEDURE crear_email('ull.edu.es');
+```
+
