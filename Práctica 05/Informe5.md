@@ -12,10 +12,10 @@ Una vez creada la tabla escriba un disparador con las siguientes característica
 
     Disparador: trigger_crear_email_before_insert
     
-        *Se ejecuta sobre la tabla clientes.
-        *Se ejecuta antes de una operación de inserción.
-        *Si el nuevo valor del email que se quiere insertar es NULL, entonces se le creará automáticamente una dirección de email y se insertará en la tabla.
-        *Si el nuevo valor del atributo email no es NULL se comprobará que el valor se corresponde con un email. En el siguiente enlace puedes encontrar una expresión regular para un email: https://regexr.com/3e48o
+        * Se ejecuta sobre la tabla clientes.
+        * Se ejecuta antes de una operación de inserción.
+        * Si el nuevo valor del email que se quiere insertar es NULL, entonces se le creará automáticamente una dirección de email y se insertará en la tabla.
+        * Si el nuevo valor del atributo email no es NULL se comprobará que el valor se corresponde con un email. En el siguiente enlace puedes encontrar una expresión regular para un email: https://regexr.com/3e48o
 
 Nota: Para crear la nueva dirección de email se deberá hacer uso del procedimiento crear_email.
 
