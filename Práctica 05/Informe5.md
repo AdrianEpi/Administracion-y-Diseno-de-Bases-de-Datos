@@ -10,7 +10,8 @@
 
 Una vez creada la tabla escriba un disparador con las siguientes características:
 
-    * Disparador: trigger_crear_email_before_insert
+    Disparador: trigger_crear_email_before_insert
+    
         *Se ejecuta sobre la tabla clientes.
         *Se ejecuta antes de una operación de inserción.
         *Si el nuevo valor del email que se quiere insertar es NULL, entonces se le creará automáticamente una dirección de email y se insertará en la tabla.
