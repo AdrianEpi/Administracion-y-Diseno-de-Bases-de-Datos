@@ -32,6 +32,9 @@ Debes entregar enlace a repositorio de GitHub que incluya al menos:
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+   En primer lugar, se ha realizado la creación de la función " crear_email ". El objetivo de la función, es el de comprobar si nuestro usuario ha escrito un correo correcto, o sí no lo ha metido en tal caso se le crea uno nuevo concatenando el nombre y los apellidos del usuario.
+   
 ```bash
 -- --------------------------------------
 -- Function crear_email
@@ -62,5 +65,59 @@ $crear_email$ LANGUAGE plpgsql;
 CREATE TRIGGER trigger_crear_email_before_insert
   BEFORE INSERT ON Cliente
   FOR EACH ROW EXECUTE PROCEDURE crear_email('ull.edu.es');
+```
+
+En segundo lugar, se realizo la creacion de la funcion " comprobar_zona " cuya funcion principal es comprobar que dos trabajadores no trabajan en la misma zona, sacando asi un mensaje de error en caso de que sucediera.
+
+```bash
+-- --------------------------------------
+-- Function comprobar_zona
+-- --------------------------------------
+DROP FUNCTION IF EXISTS comprobar_zona;
+CREATE OR REPLACE FUNCTION comprobar_zona() RETURNS TRIGGER AS $comprobar_zona$
+  BEGIN
+    IF EXISTS(SELECT * FROM Empleado WHERE (Empleado.EmpleadoTrabajaZona_Zona_Codigo = new.EmpleadoTrabajaZona_Zona_Codigo)) THEN
+    
+        RAISE EXEPTION 'No pueden trabajar en la misma zona';
+    END IF;
+    RETURN NEW;
+  END;
+$comprobar_zona$ LANGUAGE plpgsql;
+-- --------------------------------------
+-- Trigger trigger_Empleado_Trabaja_Una_zona
+-- --------------------------------------
+-- Crear un disparador que permita verificar que en cada zona de un vivero no pueden trabajar dos personas diferentes.
+CREATE TRIGGER trigger_Empleado_Trabaja_Una_zona 
+  BEFORE INSERT ON Empleado
+    FOR EACH ROW EXECUTE PROCEDURE comprobar_zona();
+END;
+
+```
+
+   Por ultimo, se ha creado la funcion " actualizar stock ", su objetivo es el de actualizar el stock de nuestra base de datos de disparadores, teniendo un control asi de nuestro stock en todo momento.
+ 
+```bash
+
+-- --------------------------------------
+-- Function actualizar_Stock
+-- --------------------------------------
+DROP FUNCTION IF EXISTS actualizar_Stock;
+CREATE OR REPLACE FUNCTION actualizar_Stock() RETURNS TRIGGER AS $actualizar_Stock$
+  BEGIN
+    IF EXISTS(SELECT * FROM Producto WHERE ((Producto.Codigo_Producto = new.Producto_Codigo_Producto) AND (Producto.Zona_Codigo = new.Producto_Zona_Codigo) AND (Producto.Stock >= new.Cantidad))) THEN
+      UPDATE Producto SET Stock = (Producto.Stock - new.Cantidad) WHERE ((Producto.Codigo_Producto = new.Producto_Codigo_Producto) AND (Producto.Zona_Codigo = new.Producto_Zona_Codigo) AND (Producto.Stock >= new.Cantidad));
+    END IF;
+    RETURN NEW;
+  END;
+$actualizar_Stock$ LANGUAGE plpgsql;
+-- --------------------------------------
+-- Trigger trigger_actualizar_stock
+-- --------------------------------------
+-- Crear un disparador que permita verificar que en cada zona de un vivero no pueden trabajar dos personas diferentes.
+CREATE TRIGGER trigger_actualizar_stock 
+  BEFORE INSERT ON ClienteCompraEmpleadoProducto
+    FOR EACH ROW EXECUTE PROCEDURE actualizar_Stock();
+END;
+
 ```
 
