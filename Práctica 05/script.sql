@@ -191,7 +191,7 @@ CREATE OR REPLACE FUNCTION comprobar_zona() RETURNS TRIGGER AS $comprobar_zona$
   BEGIN
     IF EXISTS(SELECT * FROM Empleado WHERE (Empleado.EmpleadoTrabajaZona_Zona_Codigo = new.EmpleadoTrabajaZona_Zona_Codigo)) THEN
     
-        RAISE EXEPTION 'No pueden vivir en la misma vivienda';
+        RAISE EXEPTION 'No pueden trabajar en la misma zona';
     END IF;
     RETURN NEW;
   END;
