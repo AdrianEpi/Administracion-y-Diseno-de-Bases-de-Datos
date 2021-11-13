@@ -43,6 +43,10 @@ DROP FUNCTION IF EXISTS crear_email;
 CREATE OR REPLACE FUNCTION crear_email() RETURNS TRIGGER AS $crear_email$
   DECLARE newEmail VARCHAR(100);
   BEGIN
+    IF ((new.Email NOT LIKE '^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$') AND (new.Email IS NOT NULL)) THEN
+        RAISE EXCEPTION 'El correo no es valido';
+    END IF;
+    
     IF new.Email IS NULL THEN
       new.Email := CONCAT(
         LOWER(new.Nombre),
@@ -53,9 +57,7 @@ CREATE OR REPLACE FUNCTION crear_email() RETURNS TRIGGER AS $crear_email$
       );
     END IF;
     
-    ELSEIF (new.Email not like '%@ull.edu.es')) THEN
-        RAISE EXCEPTION 'El correo no es valido'
-
+    
     RETURN NEW;
   END;
 $crear_email$ LANGUAGE plpgsql;
@@ -77,8 +79,7 @@ DROP FUNCTION IF EXISTS comprobar_zona;
 CREATE OR REPLACE FUNCTION comprobar_zona() RETURNS TRIGGER AS $comprobar_zona$
   BEGIN
     IF EXISTS(SELECT * FROM Empleado WHERE (Empleado.EmpleadoTrabajaZona_Zona_Codigo = new.EmpleadoTrabajaZona_Zona_Codigo)) THEN
-    
-        RAISE EXEPTION 'No pueden trabajar en la misma zona';
+        RAISE EXCEPTION 'No pueden trabajar en la misma zona';
     END IF;
     RETURN NEW;
   END;
@@ -121,3 +122,65 @@ END;
 
 ```
 
+## Capturas de las tablas tras las inserciones
+
+<div align="center">
+  <br>
+  <img src="img/vivero.png" alt="Markdownify">
+  <br>
+  <br>
+</div>
+
+---
+
+<div align="center">
+  <br>
+  <img src="img/zona.png" alt="Markdownify">
+  <br>
+  <br>
+</div>
+
+---
+
+<div align="center">
+  <br>
+  <img src="img/empleadoTrabajaZona.png" alt="Markdownify">
+  <br>
+  <br>
+</div>
+
+---
+
+<div align="center">
+  <br>
+  <img src="img/empleado.png" alt="Markdownify">
+  <br>
+  <br>
+</div>
+
+---
+
+<div align="center">
+  <br>
+  <img src="img/producto.png" alt="Markdownify">
+  <br>
+  <br>
+</div>
+
+---
+
+<div align="center">
+  <br>
+  <img src="img/cliente.png" alt="Markdownify">
+  <br>
+  <br>
+</div>
+
+---
+
+<div align="center">
+  <br>
+  <img src="img/clienteCompraProducto.png" alt="Markdownify">
+  <br>
+  <br>
+</div>
