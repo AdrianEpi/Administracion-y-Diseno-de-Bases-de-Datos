@@ -99,15 +99,17 @@ CREATE TABLE IF NOT EXISTS Cliente (
 
 -- --------------------------------------
 -- Function crear_email
+-- Crear un procedimiento 'crear_email' devuelva una dirección de correo electrónico compuesta por el nombre, los apellidos, el carácter '@' y un dominio pasádo como parámetro.
 -- --------------------------------------
 DROP FUNCTION IF EXISTS crear_email;
 CREATE OR REPLACE FUNCTION crear_email() RETURNS TRIGGER AS $crear_email$
   DECLARE newEmail VARCHAR(100);
   BEGIN
-    IF ((new.Email NOT LIKE '^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$') AND (new.Email IS NOT NULL)) THEN
-        RAISE EXCEPTION 'El correo no es valido';
+    IF ((new.Email NOT LIKE '^[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$') AND
+        (new.Email IS NOT NULL)) THEN
+      RAISE EXCEPTION 'El correo no es valido';
     END IF;
-    
+
     IF new.Email IS NULL THEN
       new.Email := CONCAT(
         LOWER(new.Nombre),
@@ -117,13 +119,14 @@ CREATE OR REPLACE FUNCTION crear_email() RETURNS TRIGGER AS $crear_email$
         LOWER(TG_ARGV[0])
       );
     END IF;
-    
-    
+
     RETURN NEW;
   END;
 $crear_email$ LANGUAGE plpgsql;
+
 -- --------------------------------------
 -- Trigger trigger_crear_email_before_insert
+-- Crear un disparador que permita crear una dirección de correo electrónico en el caso de que no se disponga ya de una.
 -- --------------------------------------
 CREATE TRIGGER trigger_crear_email_before_insert
   BEFORE INSERT ON Cliente
@@ -181,30 +184,36 @@ CREATE TABLE IF NOT EXISTS Empleado (
   EmpleadoTrabajaZona_Zona_Codigo INT NOT NULL,
   PRIMARY KEY (DNI),
   CONSTRAINT fk_Empleado_EmpleadoTrabajaZona
-    FOREIGN KEY (EmpleadoTrabajaZona_Fecha_Inicio , EmpleadoTrabajaZona_Zona_Codigo)
-    REFERENCES EmpleadoTrabajaZona (Fecha_Inicio , Zona_Codigo)
+    FOREIGN KEY (EmpleadoTrabajaZona_Fecha_Inicio, EmpleadoTrabajaZona_Zona_Codigo)
+    REFERENCES EmpleadoTrabajaZona (Fecha_Inicio, Zona_Codigo)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+
 -- --------------------------------------
 -- Function comprobar_zona
 -- --------------------------------------
 DROP FUNCTION IF EXISTS comprobar_zona;
 CREATE OR REPLACE FUNCTION comprobar_zona() RETURNS TRIGGER AS $comprobar_zona$
   BEGIN
-    IF EXISTS(SELECT * FROM Empleado WHERE (Empleado.EmpleadoTrabajaZona_Zona_Codigo = new.EmpleadoTrabajaZona_Zona_Codigo)) THEN
-        RAISE EXCEPTION 'No pueden trabajar en la misma zona';
+    IF EXISTS(SELECT * FROM Empleado WHERE (
+          Empleado.EmpleadoTrabajaZona_Zona_Codigo = new.EmpleadoTrabajaZona_Zona_Codigo
+        )) THEN
+      RAISE EXCEPTION 'No pueden trabajar en la misma zona';
     END IF;
+
     RETURN NEW;
   END;
 $comprobar_zona$ LANGUAGE plpgsql;
+
 -- --------------------------------------
 -- Trigger trigger_Empleado_Trabaja_Una_zona
--- --------------------------------------
 -- Crear un disparador que permita verificar que en cada zona de un vivero no pueden trabajar dos personas diferentes.
-CREATE TRIGGER trigger_Empleado_Trabaja_Una_zona 
+-- --------------------------------------
+CREATE TRIGGER trigger_Empleado_Trabaja_Una_zona
   BEFORE INSERT ON Empleado
     FOR EACH ROW EXECUTE PROCEDURE comprobar_zona();
 END;
+
 -- --------------------------------------
 -- Data for table Empleado
 -- --------------------------------------
@@ -264,8 +273,8 @@ CREATE TABLE IF NOT EXISTS ClienteCompraEmpleadoProducto (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_ClienteCompraEmpleadoProducto_Producto
-    FOREIGN KEY (Producto_Codigo_Producto , Producto_Zona_Codigo)
-    REFERENCES Producto (Codigo_Producto , Zona_Codigo)
+    FOREIGN KEY (Producto_Codigo_Producto, Producto_Zona_Codigo)
+    REFERENCES Producto (Codigo_Producto, Zona_Codigo)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT fk_ClienteCompraEmpleadoProducto_Cliente
@@ -273,26 +282,37 @@ CREATE TABLE IF NOT EXISTS ClienteCompraEmpleadoProducto (
     REFERENCES Cliente (DNI)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
+
 -- --------------------------------------
 -- Function actualizar_Stock
 -- --------------------------------------
 DROP FUNCTION IF EXISTS actualizar_Stock;
-CREATE OR REPLACE FUNCTION actualizar_Stock() RETURNS TRIGGER AS $actualizar_Stock$
+CREATE OR REPLACE FUNCTION actualizar_Stock()
+    RETURNS TRIGGER AS $actualizar_Stock$
   BEGIN
-    IF EXISTS(SELECT * FROM Producto WHERE ((Producto.Codigo_Producto = new.Producto_Codigo_Producto) AND (Producto.Zona_Codigo = new.Producto_Zona_Codigo) AND (Producto.Stock >= new.Cantidad))) THEN
-      UPDATE Producto SET Stock = (Producto.Stock - new.Cantidad) WHERE ((Producto.Codigo_Producto = new.Producto_Codigo_Producto) AND (Producto.Zona_Codigo = new.Producto_Zona_Codigo) AND (Producto.Stock >= new.Cantidad));
+    IF EXISTS(SELECT * FROM Producto WHERE (
+        (Producto.Codigo_Producto = new.Producto_Codigo_Producto) AND
+        (Producto.Zona_Codigo = new.Producto_Zona_Codigo) AND
+        (Producto.Stock >= new.Cantidad))) THEN
+      UPDATE Producto SET Stock = (Producto.Stock - new.Cantidad) WHERE (
+          (Producto.Codigo_Producto = new.Producto_Codigo_Producto) AND
+          (Producto.Zona_Codigo = new.Producto_Zona_Codigo) AND
+          (Producto.Stock >= new.Cantidad));
     END IF;
+
     RETURN NEW;
   END;
 $actualizar_Stock$ LANGUAGE plpgsql;
+
 -- --------------------------------------
 -- Trigger trigger_actualizar_stock
+-- Crear un disparador que permita mantener actualizado el stock de la base de datos de viveros.
 -- --------------------------------------
--- Crear un disparador que permita verificar que en cada zona de un vivero no pueden trabajar dos personas diferentes.
-CREATE TRIGGER trigger_actualizar_stock 
+CREATE TRIGGER trigger_actualizar_stock
   BEFORE INSERT ON ClienteCompraEmpleadoProducto
     FOR EACH ROW EXECUTE PROCEDURE actualizar_Stock();
 END;
+
 -- --------------------------------------
 -- Data for table ClienteCompraEmpleadoProducto
 -- --------------------------------------
