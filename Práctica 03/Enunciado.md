@@ -1,4 +1,4 @@
-# Introducción a PostgreSQL
+# Práctica 3: Introducción a PostgreSQL
 
 El alumno debe instalar el SGDB postgresql y crear una base de datos de prueba. La entrega corresponderá al histórico de comandos ejecutados hasta concluir la tarea. Estos deben estar en el repositorio GitHub de la asignatura.
 

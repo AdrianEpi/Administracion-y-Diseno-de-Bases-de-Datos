@@ -1,4 +1,4 @@
-# Conclusiones artículos
+# Práctica 1: Conclusiones artículos
 
 Realiza un documento Markdown en tu repositorio de la asignatura en la que incluyas tus conclusiones respecto a los siguientes artículos:
 
